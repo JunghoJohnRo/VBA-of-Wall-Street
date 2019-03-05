@@ -1,0 +1,47 @@
+Sub stockeasy()
+'Loop through all worksheets
+
+Dim ws As Worksheet
+
+For Each ws In Worksheets
+ws.Activate
+    
+    'Create labels for header
+    Range("I1").Value = "Ticker"
+    Range("J1").Value = "Total Stock Volume"
+    
+    'Define variables for the ticker and total stock volume.
+    'Give initial value to total stock volume.
+    Dim ticker As String
+    Dim totalstockvolume As Double
+    totalstockvolume = 0
+
+    'Define variable to keep track of each unique ticker
+    Dim summarytablerow As Integer
+    summarytablerow = 2
+    Dim i As Long
+    
+    'Define last row of data
+    Dim Lastrow As Long
+    Lastrow = ws.Cells(Rows.Count, 1).End(xlUp).row
+    
+        'Loop through all the stocks
+        For i = 2 To Lastrow
+            If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+                ticker = Cells(i, 1).Value
+                totalstockvolume = totalstockvolume + Cells(i, 7).Value
+                Range("I" & summarytablerow).Value = ticker
+                Range("j" & summarytablerow).Value = totalstockvolume
+                summarytablerow = summarytablerow + 1
+                totalstockvolume = 0
+            Else
+                totalstockvolume = totalstockvolume + Cells(i, 7).Value
+            
+            End If
+         
+         Next i
+    
+    Next ws
+ 
+End Sub
+

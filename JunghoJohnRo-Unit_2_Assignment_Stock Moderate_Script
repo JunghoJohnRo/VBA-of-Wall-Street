@@ -1,0 +1,86 @@
+Sub stockmoderate()
+
+' Loop through all sheets
+    For Each ws In Worksheets
+    ws.Activate
+        
+        'Create Label for headers
+        Range("I1").Value = "Ticker"
+        Range("J1").Value = "Yearly Change"
+        Range("K1").Value = "Percent Change"
+        Range("L1").Value = "Total Stock Volume"
+
+        'Define ticker as a variable
+        Dim ticker As String
+
+        'Define variable and set intial value for total stock volume
+        Dim totalstockvolume As Double
+        totalstockvolume = 0
+
+        'Define variable to calculate last row of data
+        Dim Lastrow As Long
+
+        'Define open year date
+        Dim opeanyeardate As Boolean
+        opeanyeardate = True
+
+        'Define variable for Open year price, end of year price and yearly change
+        Dim openyearprice As Double
+        Dim endyearprice As Double
+        Dim yearlychange As Double
+
+        'Define percentchange
+        Dim percentchange As Double
+
+        'Define variable to keep track of each unique ticker
+        Dim summarytablerow As Integer
+        summarytablerow = 2
+
+        'Define last row of data
+        Lastrow = ws.Cells(Rows.Count, 1).End(xlUp).row
+
+        ' Loop through all ticker
+        For i = 2 To Lastrow
+            If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+                ticker = Cells(i, 1).Value
+                totalstockvolume = totalstockvolume + Cells(i, 7).Value
+                
+                Range("I" & summarytablerow).Value = ticker
+                Range("L" & summarytablerow).Value = totalstockvolume
+                
+                endyearprice = Cells(i, 6).Value
+                yearlychange = endyearprice - openyearprice
+                Range("J" & summarytablerow).Value = yearlychange
+                
+                percentchange = (yearlychange / openyearprice)
+                Range("K" & summarytablerow).Value = percentchange
+                Range("K" & summarytablerow).NumberFormat = "0.00%"
+                
+                    If Range("J" & summarytablerow).Value > 0 Then
+                        Range("J" & summarytablerow).Interior.ColorIndex = 4
+                    Else
+                        Range("J" & summarytablerow).Interior.ColorIndex = 3
+                    End If
+                
+                summarytablerow = summarytablerow + 1
+                
+                totalstockvolume = 0
+    
+                opeanyeardate = True
+        
+            Else
+                totalstockvolume = totalstockvolume + Cells(i, 7).Value
+                
+                If opeanyeardate And Cells(i, 3).Value <> 0 Then
+                    openyearprice = Cells(i, 3).Value
+                    opeanyeardate = False
+                End If
+                   
+            End If
+            
+        Next i
+
+    Next ws
+
+End Sub
+
